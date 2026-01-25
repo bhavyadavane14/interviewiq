@@ -48,7 +48,7 @@ Rules:
             api_key=self.api_key,
             session_id=f"question_gen_{question_number}",
             system_message="You are an expert interview question generator. Always return valid JSON only."
-        ).with_model("openai", "gpt-5.2")
+        ).with_model("openai", "gpt-4o")
         
         message = UserMessage(text=prompt)
         response = await chat.send_message(message)
@@ -79,7 +79,12 @@ Provide evaluation in ONLY valid JSON format:
     "structure": 7.5,
     "relevance": 8.0,
     "explanation": "Brief explanation of score",
-    "weakness_identified": "Main weakness"
+    "weakness_identified": "Main weakness",
+    "explainability_tags": [
+        "Low confidence due to hesitation",
+        "Structure weak (no STAR method)",
+        "Good relevance, poor clarity"
+    ]
 }}
 
 Return ONLY the JSON object, no other text."""
@@ -88,7 +93,7 @@ Return ONLY the JSON object, no other text."""
             api_key=self.api_key,
             session_id=f"eval_{hash(answer)}",
             system_message="You are an expert interview evaluator. Always return valid JSON only."
-        ).with_model("openai", "gpt-5.2")
+        ).with_model("openai", "gpt-4o")
         
         message = UserMessage(text=prompt)
         response = await chat.send_message(message)
@@ -145,7 +150,8 @@ Return ONLY the JSON object, no other text."""
                 "mistakes": [{"what_went_wrong": "Lacked structure", "correction": "Use STAR method"}],
                 "improved_answer": "Consider structuring your answer with clear examples",
                 "why_improved": "Better structure helps communicate your experience",
-                "tips": ["Practice STAR method", "Use specific examples", "Be concise"]
+                "tips": ["Practice STAR method", "Use specific examples", "Be concise"],
+                "explainability_tags": ["Structure weak (no STAR method)"]
             }
     
     def _get_fallback_question(self, interview_type: InterviewType, number: int) -> str:

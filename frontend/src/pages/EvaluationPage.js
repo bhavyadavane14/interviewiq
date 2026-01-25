@@ -51,13 +51,22 @@ const EvaluationPage = () => {
             <div className="text-6xl font-bold text-indigo-600 mb-2">
               {evaluation.overall_score}/10
             </div>
-            <div className={`inline-block px-4 py-2 rounded-full font-semibold ${
-              evaluation.readiness_flag === 'Ready' ? 'bg-teal-100 text-teal-700' :
-              evaluation.readiness_flag === 'Needs Practice' ? 'bg-amber-100 text-amber-700' :
-              'bg-slate-200 text-slate-700'
-            }`}>
+            <div className={`inline-block px-4 py-2 rounded-full font-semibold ${evaluation.readiness_flag === 'Ready' ? 'bg-teal-100 text-teal-700' :
+                evaluation.readiness_flag === 'Needs Practice' ? 'bg-amber-100 text-amber-700' :
+                  'bg-slate-200 text-slate-700'
+              }`}>
               {evaluation.readiness_flag}
             </div>
+
+            {evaluation.explainability_tags && (
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {evaluation.explainability_tags.map((tag, i) => (
+                  <span key={i} className="text-xs font-medium px-3 py-1 bg-white/50 text-indigo-700 rounded-lg border border-indigo-200">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -130,7 +139,7 @@ const EvaluationPage = () => {
               {evaluation.detailed_feedback.map((feedback, i) => (
                 <div key={i} className="border-b border-slate-200 last:border-0 pb-6 last:pb-0">
                   <div className="font-semibold text-lg mb-3">Question {i + 1}: {feedback.question}</div>
-                  
+
                   <div className="mb-4">
                     <div className="text-sm font-medium text-slate-600 mb-1">Your Answer:</div>
                     <div className="bg-slate-50 p-4 rounded-lg text-slate-700">
@@ -139,6 +148,16 @@ const EvaluationPage = () => {
                     <div className="text-sm font-bold text-indigo-600 mt-2">
                       Score: {feedback.score}/10
                     </div>
+
+                    {feedback.explainability_tags && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {feedback.explainability_tags.map((tag, i) => (
+                          <span key={i} className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-200 uppercase tracking-tighter">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {feedback.improved_answer && (

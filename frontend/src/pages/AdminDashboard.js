@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { adminAPI } from '../utils/api';
-import { Brain, Users, TrendingUp, Calendar, LogOut, Search } from 'lucide-react';
+import { Brain, Users, TrendingUp, Calendar, LogOut, Search, Award, AlertTriangle, BarChart2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminDashboard = () => {
@@ -123,17 +123,107 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Platform Insights */}
-        {insights && insights.common_mistakes.length > 0 && (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 mb-8">
-            <h2 className="text-xl font-bold mb-6">Platform Improvement Recommendations</h2>
-            <div className="space-y-3">
-              {insights.common_mistakes.slice(0, 5).map((mistake, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <span className="text-slate-700">{mistake.mistake}</span>
-                  <span className="text-sm font-semibold text-indigo-600">{mistake.frequency} occurrences</span>
+        {/* Performers and Weak Candidates */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="bg-white p-6 rounded-xl border border-slate-200">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <Award className="text-amber-500" size={24} />
+              Top Performers
+            </h2>
+            <div className="space-y-4">
+              {dashboardStats?.top_performers?.map((u, i) => (
+                <div key={u.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 flex items-center justify-center bg-amber-100 text-amber-700 rounded-full text-xs font-bold">{i+1}</span>
+                    <span className="font-medium">{u.name}</span>
+                  </div>
+                  <span className="font-bold text-indigo-600">{u.average_score.toFixed(1)}</span>
                 </div>
               ))}
+              {(!dashboardStats?.top_performers || dashboardStats.top_performers.length === 0) && (
+                <p className="text-slate-400 text-center py-4">No top performers yet</p>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-200">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <AlertTriangle className="text-red-500" size={24} />
+              Weak Candidates
+            </h2>
+            <div className="space-y-4">
+              {dashboardStats?.weak_candidates?.map((u, i) => (
+                <div key={u.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium">{u.name}</span>
+                  </div>
+                  <span className="font-bold text-red-600">{u.average_score.toFixed(1)}</span>
+                </div>
+              ))}
+              {(!dashboardStats?.weak_candidates || dashboardStats.weak_candidates.length === 0) && (
+                <p className="text-slate-400 text-center py-4">No candidates in this category</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Platform Insights */}
+        {insights && (
+          <div className="bg-white p-6 rounded-xl border border-slate-200 mb-8">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <BarChart2 className="text-indigo-600" size={24} />
+              AI Interview Insights
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-500 mb-4 tracking-wider uppercase">Common Mistakes</h3>
+                <div className="space-y-3">
+                  {insights.common_mistakes?.slice(0, 5).map((mistake, i) => (
+                    <div key={i} className="p-3 bg-slate-50 rounded-lg">
+                      <div className="text-slate-700 text-sm font-medium">{mistake.mistake}</div>
+                      <div className="text-xs text-slate-500 mt-1">{mistake.frequency} occurrences</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-slate-500 mb-4 tracking-wider uppercase">Most Failed Questions</h3>
+                <div className="space-y-3">
+                  {insights.most_failed_questions?.slice(0, 5).map((item, i) => (
+                    <div key={i} className="p-3 bg-slate-50 rounded-lg">
+                      <div className="text-slate-700 text-sm font-medium line-clamp-2">{item.question}</div>
+                      <div className="text-xs text-red-500 mt-1">{item.count} failures</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-slate-500 mb-4 tracking-wider uppercase">AI Confidence Distribution</h3>
+                <div className="space-y-4 mt-6">
+                  {['high', 'medium', 'low'].map(level => {
+                    const count = insights.confidence_distribution?.[level] || 0;
+                    const total = Object.values(insights.confidence_distribution || {}).reduce((a, b) => a + b, 0) || 1;
+                    const percentage = (count / total) * 100;
+                    return (
+                      <div key={level}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="capitalize">{level} Confidence</span>
+                          <span>{count}</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${level === 'high' ? 'bg-teal-500' : level === 'medium' ? 'bg-amber-500' : 'bg-red-500'}`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}

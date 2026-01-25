@@ -508,6 +508,9 @@ async def get_admin_dashboard():
     ready_count = sum(1 for u in users if u.get("readiness_status") == ReadinessStatus.READY.value)
     needs_practice = sum(1 for u in users if u.get("readiness_status") == ReadinessStatus.NEEDS_PRACTICE.value)
     
+    top_performers = sorted(users, key=lambda x: x.get("average_score", 0), reverse=True)[:5]
+    weak_candidates = sorted([u for u in users if u.get("total_interviews", 0) > 0], key=lambda x: x.get("average_score", 0))[:5]
+    
     week_ago = (datetime.now(timezone.utc).timestamp() - 7 * 24 * 3600)
     active_this_week = 0
     for u in users:
@@ -519,17 +522,20 @@ async def get_admin_dashboard():
             except:
                 pass
     
-    if total_users == 0:
+    if not users:
         avg_score = 0
     else:
-        avg_score = sum(u.get("average_score", 0) for u in users) / total_users
+        scores = [u.get("average_score", 0) for u in users if u.get("total_interviews", 0) > 0]
+        avg_score = sum(scores) / len(scores) if scores else 0
     
     return {
         "total_users": total_users,
         "ready_for_interview": ready_count,
         "needs_practice": needs_practice,
         "active_this_week": active_this_week,
-        "average_score": round(avg_score, 2)
+        "average_score": round(avg_score, 2),
+        "top_performers": top_performers,
+        "weak_candidates": weak_candidates
     }
 
 @api_router.get("/admin/users", dependencies=[Depends(require_admin)])
@@ -578,16 +584,33 @@ async def get_platform_insights():
     all_interviews = await db.interviews.find({"status": "completed"}, {"_id": 0}).to_list(1000)
     
     all_weak_areas = {}
+    failed_questions = {}
+    confidence_dist = {"high": 0, "medium": 0, "low": 0}
+    
     for interview in all_interviews:
         for ans in interview.get("answers", []):
-            weakness = ans.get("evaluation", {}).get("weakness_identified", "")
+            eval_data = ans.get("evaluation", {})
+            weakness = eval_data.get("weakness_identified", "")
             if weakness:
                 all_weak_areas[weakness] = all_weak_areas.get(weakness, 0) + 1
+            
+            score = ans.get("score", 0)
+            if score < 5:
+                q_text = ans.get("question", "Unknown Question")
+                failed_questions[q_text] = failed_questions.get(q_text, 0) + 1
+            
+            conf = eval_data.get("confidence", 0)
+            if conf >= 8: confidence_dist["high"] += 1
+            elif conf >= 5: confidence_dist["medium"] += 1
+            else: confidence_dist["low"] += 1
     
     common_mistakes = sorted(all_weak_areas.items(), key=lambda x: x[1], reverse=True)[:10]
+    most_failed = sorted(failed_questions.items(), key=lambda x: x[1], reverse=True)[:5]
     
     return {
         "common_mistakes": [{"mistake": m, "frequency": f} for m, f in common_mistakes],
+        "most_failed_questions": [{"question": q, "count": c} for q, c in most_failed],
+        "confidence_distribution": confidence_dist,
         "total_interviews": len(all_interviews)
     }
 
@@ -606,6 +629,31 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup_event():
+    # Ensure default admin user exists
+    admin_email = "admin@interviewiq.com"
+    existing_admin = await db.users.find_one({"email": admin_email})
+    
+    if not existing_admin:
+        user_id = str(uuid.uuid4())
+        admin_dict = {
+            "id": user_id,
+            "email": admin_email,
+            "password": hash_password("admin123"),
+            "name": "Platform Admin",
+            "role": Role.ADMIN.value,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "last_login": None,
+            "total_interviews": 0,
+            "average_score": 0.0,
+            "streak": 0,
+            "readiness_status": ReadinessStatus.NOT_READY.value,
+            "consent": True
+        }
+        await db.users.insert_one(admin_dict)
+        logger.info(f"Default admin user created: {admin_email}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
