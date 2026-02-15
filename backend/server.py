@@ -26,7 +26,7 @@ if not mongo_url:
     raise RuntimeError("MONGO_URL is not set in environment variables")
 
 client = AsyncIOMotorClient(mongo_url)
-db = client[Interview_143]
+db = client["Interview_143"]
 
 
 app = FastAPI()
