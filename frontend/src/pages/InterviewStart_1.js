@@ -15,7 +15,7 @@ const InterviewStart = () => {
     try {
       const response = await interviewAPI.start({
         interview_type: interviewType,
-        focus_area: focusArea || null
+        focus_area: focusArea || interviewType
       });
       toast.success('Interview started!');
       navigate(`/interview/${response.data.id}`);
