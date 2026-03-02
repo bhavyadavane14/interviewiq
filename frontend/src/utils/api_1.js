@@ -1,11 +1,10 @@
 import axios from "axios";
 
-// ✅ Correct way for Vite
-const BACKEND_URL = import.meta.env.VITE_API_URL;
+// ✅ Correct for Create React App (react-scripts)
+const BACKEND_URL = process.env.REACT_APP_API_URL;
 
-// Optional debug check
 if (!BACKEND_URL) {
-  console.error("❌ VITE_API_URL is not defined in environment variables");
+  console.error("REACT_APP_API_URL is NOT defined");
 }
 
 const api = axios.create({
