@@ -117,7 +117,11 @@ const InterviewFlow = () => {
         toast.error('Failed to submit answer. Falling back to static mode...');
         // Mock fallback for demo
         setAnswer('');
+<<<<<<< HEAD
         if (interview.answers.length < 4) {
+=======
+        if (interview.answers.length < 9) {
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
           toast.info("Using predefined question bank for stability.");
           // Simple mock to keep demo going
           window.location.reload();
@@ -141,6 +145,7 @@ const InterviewFlow = () => {
             <span className="text-2xl font-bold">InterviewIQ</span>
           </div>
           <div className="text-sm text-slate-600">
+<<<<<<< HEAD
             Question {interview.answers.length + 1} of 5
           </div>
         </div>
@@ -149,6 +154,15 @@ const InterviewFlow = () => {
         <div className="mb-8">
           <div className="flex gap-2 mb-2">
             {[...Array(5)].map((_, i) => (
+=======
+            Question {interview.answers.length + 1} of 10
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <div className="flex gap-2 mb-2">
+            {[...Array(10)].map((_, i) => (
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
               <div
                 key={i}
                 className={`h-2 flex-1 rounded-full ${i < interview.answers.length ? 'bg-teal-500' :

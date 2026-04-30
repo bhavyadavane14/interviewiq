@@ -1,6 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+<<<<<<< HEAD
+=======
+import { ThemeProvider } from './contexts/ThemeContext';
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
 import { Toaster } from 'sonner';
 import './App.css';
 
@@ -14,6 +18,19 @@ import EvaluationPage from './pages/EvaluationPage';
 import PracticePage from './pages/PracticePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUserDetail from './pages/AdminUserDetail';
+<<<<<<< HEAD
+=======
+import HowItWorksPage from './pages/HowItWorksPage';
+import InterviewTypesPage from './pages/InterviewTypesPage';
+import FeaturesPage from './pages/FeaturesPage';
+import WhyUsPage from './pages/WhyUsPage';
+import AboutUsPage from './pages/AboutUsPage';
+import ContactSupportPage from './pages/ContactSupportPage';
+import CareersPage from './pages/CareersPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -37,6 +54,18 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+<<<<<<< HEAD
+=======
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/interview-types" element={<InterviewTypesPage />} />
+      <Route path="/features" element={<FeaturesPage />} />
+      <Route path="/why-us" element={<WhyUsPage />} />
+      <Route path="/about" element={<AboutUsPage />} />
+      <Route path="/contact" element={<ContactSupportPage />} />
+      <Route path="/careers" element={<CareersPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       
@@ -108,12 +137,23 @@ const AppRoutes = () => {
 
 function App() {
   return (
+<<<<<<< HEAD
     <AuthProvider>
       <BrowserRouter>
         <AppRoutes />
         <Toaster position="top-right" richColors />
       </BrowserRouter>
     </AuthProvider>
+=======
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+          <Toaster position="top-right" richColors />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
+>>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
   );
 }
 
