@@ -1,10 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-<<<<<<< HEAD
-=======
 import { ThemeProvider } from './contexts/ThemeContext';
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
 import { Toaster } from 'sonner';
 import './App.css';
 
@@ -18,8 +15,8 @@ import EvaluationPage from './pages/EvaluationPage';
 import PracticePage from './pages/PracticePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUserDetail from './pages/AdminUserDetail';
-<<<<<<< HEAD
-=======
+
+// New pages
 import HowItWorksPage from './pages/HowItWorksPage';
 import InterviewTypesPage from './pages/InterviewTypesPage';
 import FeaturesPage from './pages/FeaturesPage';
@@ -29,8 +26,6 @@ import ContactSupportPage from './pages/ContactSupportPage';
 import CareersPage from './pages/CareersPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
-
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -54,8 +49,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-<<<<<<< HEAD
-=======
+
+      {/* Public Pages */}
       <Route path="/how-it-works" element={<HowItWorksPage />} />
       <Route path="/interview-types" element={<InterviewTypesPage />} />
       <Route path="/features" element={<FeaturesPage />} />
@@ -65,10 +60,12 @@ const AppRoutes = () => {
       <Route path="/careers" element={<CareersPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
+
+      {/* Auth */}
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
-      
+
+      {/* Protected */}
       <Route
         path="/dashboard"
         element={
@@ -77,7 +74,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/interview/start"
         element={
@@ -86,7 +83,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/interview/:interviewId"
         element={
@@ -95,7 +92,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/evaluation/:interviewId"
         element={
@@ -104,7 +101,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/practice"
         element={
@@ -113,7 +110,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
+      {/* Admin */}
       <Route
         path="/admin"
         element={
@@ -122,7 +120,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/admin/users/:userId"
         element={
@@ -137,14 +135,6 @@ const AppRoutes = () => {
 
 function App() {
   return (
-<<<<<<< HEAD
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-        <Toaster position="top-right" richColors />
-      </BrowserRouter>
-    </AuthProvider>
-=======
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
@@ -153,7 +143,6 @@ function App() {
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
   );
 }
 
