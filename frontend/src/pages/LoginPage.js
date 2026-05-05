@@ -85,16 +85,9 @@ const LoginPage = () => {
           <p className="text-center mt-6 text-sm text-slate-600">
             Don't have an account?{' '}
             <Link to="/signup" className="text-indigo-600 hover:text-indigo-700 font-medium">
-<<<<<<< HEAD
-              Sign up
-            </Link>
-          </p>
-=======
               Create Account
             </Link>
           </p>
-
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
         </div>
       </div>
       

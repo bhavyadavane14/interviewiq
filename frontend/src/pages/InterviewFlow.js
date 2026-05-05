@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { interviewAPI } from '../utils/api';
 import { Mic, MicOff, Send, Brain } from 'lucide-react';
@@ -48,7 +48,7 @@ const InterviewFlow = () => {
       const response = await interviewAPI.getHistory();
       const currentInterview = response.data.find(i => i.id === interviewId);
       setInterview(currentInterview);
-      if (currentInterview.questions.length > 0) {
+      if (currentInterview && currentInterview.questions.length > 0) {
         setCurrentQuestion(currentInterview.questions[currentInterview.answers.length]);
       }
     } catch (error) {
@@ -85,7 +85,6 @@ const InterviewFlow = () => {
     }
 
     try {
-      // Simulate timeout for fallback
       const response = await Promise.race([
         interviewAPI.submitAnswer({
           interview_id: interviewId,
@@ -96,37 +95,24 @@ const InterviewFlow = () => {
       ]);
 
       if (response.data.is_complete) {
-        const evalResponse = await interviewAPI.complete(interviewId);
+        await interviewAPI.complete(interviewId);
         toast.success('Interview completed!');
         navigate(`/evaluation/${interviewId}`);
       } else {
+        const nextQ = response.data.next_question;
         setCurrentQuestion({
-          id: interview.questions[interview.answers.length + 1]?.id || response.data.next_question.id,
-          question: response.data.next_question.question,
+          id: nextQ.id,
+          question: nextQ.question,
           number: interview.answers.length + 2
         });
         setAnswer('');
         toast.success('Answer submitted!');
+        
+        // Refresh local interview state
+        loadInterview();
       }
     } catch (error) {
-      if (error.message === 'timeout' || error.response?.status === 504) {
-        toast.warning('Switching to Static Question Mode (AI took too long)');
-        // Fallback logic could go here - for now we just show the error and retry or use existing questions
-        toast.error('Network delay. Please try again.');
-      } else {
-        toast.error('Failed to submit answer. Falling back to static mode...');
-        // Mock fallback for demo
-        setAnswer('');
-<<<<<<< HEAD
-        if (interview.answers.length < 4) {
-=======
-        if (interview.answers.length < 9) {
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
-          toast.info("Using predefined question bank for stability.");
-          // Simple mock to keep demo going
-          window.location.reload();
-        }
-      }
+      toast.error('Failed to submit answer. Please try again.');
     }
     setLoading(false);
   };
@@ -134,6 +120,8 @@ const InterviewFlow = () => {
   if (!interview || !currentQuestion) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
+
+  const totalQuestions = 10;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -145,24 +133,14 @@ const InterviewFlow = () => {
             <span className="text-2xl font-bold">InterviewIQ</span>
           </div>
           <div className="text-sm text-slate-600">
-<<<<<<< HEAD
-            Question {interview.answers.length + 1} of 5
+            Question {interview.answers.length + 1} of {totalQuestions}
           </div>
         </div>
 
         {/* Progress */}
         <div className="mb-8">
           <div className="flex gap-2 mb-2">
-            {[...Array(5)].map((_, i) => (
-=======
-            Question {interview.answers.length + 1} of 10
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="flex gap-2 mb-2">
-            {[...Array(10)].map((_, i) => (
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
+            {[...Array(totalQuestions)].map((_, i) => (
               <div
                 key={i}
                 className={`h-2 flex-1 rounded-full ${i < interview.answers.length ? 'bg-teal-500' :

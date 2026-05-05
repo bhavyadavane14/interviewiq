@@ -1,33 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import { ArrowRight, Brain, TrendingUp, Target, CheckCircle, XCircle, Sparkles, BarChart3 } from 'lucide-react';
-
-const LandingPage = () => {
-  return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-indigo-600" size={32} />
-            <span className="text-2xl font-bold text-slate-900">InterviewIQ</span>
-          </div>
-          <div className="hidden md:flex gap-8 items-center">
-            <a href="#how-it-works" className="text-slate-600 hover:text-indigo-600">How It Works</a>
-            <a href="#interview-types" className="text-slate-600 hover:text-indigo-600">Interview Types</a>
-            <a href="#features" className="text-slate-600 hover:text-indigo-600">Features</a>
-            <a href="#why-us" className="text-slate-600 hover:text-indigo-600">Why Us</a>
-            <Link to="/login" className="text-slate-600 hover:text-indigo-600">Login</Link>
-            <Link to="/signup" className="btn-primary">Sign Up</Link>
-          </div>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-indigo-50 via-white to-teal-50 py-20">
-=======
-import { ArrowRight, Brain, Target, Sparkles, HelpCircle } from 'lucide-react';
+import { ArrowRight, Brain, Target, Sparkles, TrendingUp, BarChart3, CheckCircle, XCircle } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
@@ -38,35 +11,16 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-indigo-50 via-white to-teal-50 flex-grow flex items-center py-20 border-b border-slate-200">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
               AI Interview Coach that <span className="text-indigo-600">Adapts</span>, <span className="text-teal-600">Evaluates</span> & <span className="text-violet-600">Improves</span> You
             </h1>
-<<<<<<< HEAD
+
             <p className="text-xl text-slate-600 mb-8 leading-relaxed">
               Get real-time AI feedback, understand your mistakes, and track your growth with explainable scoring.
             </p>
-            <div className="flex gap-4">
-              <Link to="/signup" className="btn-primary flex items-center gap-2" data-testid="hero-signup-btn">
-                Start Mock Interview <ArrowRight size={20} />
-              </Link>
-              <Link to="/login" className="bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium">
-                Login
-              </Link>
-            </div>
-          </div>
-          <div>
-            <img 
-              src="https://images.pexels.com/photos/5922538/pexels-photo-5922538.jpeg" 
-              alt="Professional interview" 
-              className="rounded-2xl shadow-2xl"
-=======
-            <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
-              Get real-time AI feedback, understand your mistakes, and track your growth with explainable scoring. The most realistic mock interview platform.
-            </p>
-
+            
             <div className="space-y-6 mb-8 max-w-lg">
               <div className="pl-4 border-l-2 border-indigo-500">
                 <h3 className="font-bold text-slate-900 text-lg">Adaptive AI</h3>
@@ -85,8 +39,15 @@ const LandingPage = () => {
                 <p className="text-slate-500">Simulate high-pressure interviews with our interactive engine.</p>
               </div>
             </div>
-            
 
+            <div className="flex gap-4">
+              <Link to="/signup" className="btn-primary flex items-center gap-2" data-testid="hero-signup-btn">
+                Start Mock Interview <ArrowRight size={20} />
+              </Link>
+              <Link to="/login" className="bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium">
+                Login
+              </Link>
+            </div>
           </div>
           <div className="hidden lg:block relative">
             <div className="absolute inset-0 bg-indigo-500 rounded-3xl blur-3xl opacity-20 transform rotate-6"></div>
@@ -94,13 +55,11 @@ const LandingPage = () => {
               src="https://images.pexels.com/photos/5922538/pexels-photo-5922538.jpeg?auto=compress&cs=tinysrgb&w=800" 
               alt="Professional interview" 
               className="rounded-3xl shadow-2xl relative z-10"
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
             />
           </div>
         </div>
       </section>
 
-<<<<<<< HEAD
       {/* How It Works */}
       <section id="how-it-works" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -215,49 +174,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Brain size={28} />
-                <span className="text-xl font-bold">InterviewIQ</span>
-              </div>
-              <p className="text-slate-400 text-sm">AI-powered interview coaching platform</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#how-it-works" className="hover:text-white">How It Works</a></li>
-                <li><a href="#interview-types" className="hover:text-white">Interview Types</a></li>
-                <li><Link to="/practice" className="hover:text-white">Practice</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white">About</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
-            <p>© 2024 InterviewIQ. Built for GenAI Hackathon.</p>
-            <p className="mt-2">Your interview data is private and not shared with third parties.</p>
-          </div>
-        </div>
-      </footer>
-=======
       <PublicFooter />
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
     </div>
   );
 };

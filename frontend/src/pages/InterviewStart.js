@@ -55,7 +55,7 @@ const InterviewStart = () => {
           </div>
 
           <div>
-<<<<<<< HEAD
+
             <label className="block text-sm font-medium mb-2">Focus Area (Optional)</label>
             <input
               type="text"
@@ -107,17 +107,17 @@ const InterviewStart = () => {
               </optgroup>
               <option value="Quality Assurance (QA)">Quality Assurance (QA)</option>
             </select>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
+
           </div>
 
           <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
             <h3 className="font-semibold mb-2">What to expect:</h3>
             <ul className="text-sm text-slate-600 space-y-1">
-<<<<<<< HEAD
+
               <li>• 5 adaptive questions based on your answers</li>
 =======
               <li>• 10 adaptive questions tailored to your focus area</li>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
+
               <li>• AI adjusts difficulty as you progress</li>
               <li>• Detailed feedback with corrections after completion</li>
               <li>• Voice input available (Chrome/Edge only)</li>

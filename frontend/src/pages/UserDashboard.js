@@ -2,14 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { analyticsAPI, interviewAPI } from '../utils/api';
-<<<<<<< HEAD
-import { Brain, TrendingUp, Target, Calendar, LogOut, BookOpen, Play } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { toast } from 'sonner';
-
-const UserDashboard = () => {
-  const { user, logout } = useAuth();
-=======
 import { Brain, TrendingUp, Target, Calendar, LogOut, BookOpen, Play, Sparkles, Sun, Moon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { toast } from 'sonner';
@@ -18,7 +10,7 @@ import { useTheme } from '../contexts/ThemeContext';
 const UserDashboard = () => {
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
+
   const [analytics, setAnalytics] = useState(null);
   const [interviews, setInterviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,20 +46,6 @@ const UserDashboard = () => {
   const hasData = analytics && analytics.total_interviews > 0;
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-indigo-600" size={32} />
-            <span className="text-2xl font-bold">InterviewIQ</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link to="/dashboard" className="text-slate-900 font-medium">Dashboard</Link>
-            <Link to="/practice" className="text-slate-600 hover:text-indigo-600">Practice</Link>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-slate-600 hover:text-red-600">
-=======
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
@@ -89,7 +67,6 @@ const UserDashboard = () => {
             </button>
 
             <button onClick={handleLogout} className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
               <LogOut size={20} />
               Logout
             </button>
@@ -98,89 +75,45 @@ const UserDashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8" data-testid="user-dashboard">
-<<<<<<< HEAD
         {/* Welcome */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}!</h1>
-          <p className="text-slate-600">Track your interview performance and growth</p>
-=======
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 dark:text-white">Welcome back, {user?.name}!</h1>
           <p className="text-slate-600 dark:text-slate-400">Track your interview performance and growth</p>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
         </div>
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-<<<<<<< HEAD
-          <div className="stat-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Overall Score</span>
-              <Target className="text-indigo-600" size={20} />
-            </div>
-            <div className="text-3xl font-bold" data-testid="overall-score">
-=======
-          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-6 rounded-xl border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-600 dark:text-slate-400">Overall Score</span>
               <Target className="text-indigo-600 dark:text-indigo-400" size={20} />
             </div>
             <div className="text-3xl font-bold dark:text-white" data-testid="overall-score">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
               {hasData ? analytics.overall_score.toFixed(1) : '—'}
             </div>
           </div>
 
-<<<<<<< HEAD
-          <div className="stat-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Interviews Taken</span>
-              <Calendar className="text-teal-600" size={20} />
-            </div>
-            <div className="text-3xl font-bold" data-testid="total-interviews">
-=======
-          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-6 rounded-xl border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-600 dark:text-slate-400">Interviews Taken</span>
               <Calendar className="text-teal-600 dark:text-teal-400" size={20} />
             </div>
             <div className="text-3xl font-bold dark:text-white" data-testid="total-interviews">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
               {analytics?.total_interviews || 0}
             </div>
           </div>
 
-<<<<<<< HEAD
-          <div className="stat-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Practice Streak</span>
-              <TrendingUp className="text-violet-600" size={20} />
-            </div>
-            <div className="text-3xl font-bold" data-testid="streak">
-=======
-          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-6 rounded-xl border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-600 dark:text-slate-400">Practice Streak</span>
               <TrendingUp className="text-violet-600 dark:text-violet-400" size={20} />
             </div>
             <div className="text-3xl font-bold dark:text-white" data-testid="streak">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
               {analytics?.streak || 0} days
             </div>
           </div>
 
-<<<<<<< HEAD
-          <div className="stat-card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Readiness</span>
-              <Brain className="text-indigo-600" size={20} />
-            </div>
-            <div className={`text-sm font-semibold px-3 py-1 rounded-full inline-block ${
-              analytics?.readiness_status === 'Ready' ? 'bg-teal-50 text-teal-700' :
-              analytics?.readiness_status === 'Needs Practice' ? 'bg-amber-50 text-amber-700' :
-              'bg-slate-100 text-slate-600'
-=======
-          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <div className="stat-card bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 p-6 rounded-xl border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-600 dark:text-slate-400">Readiness</span>
               <Brain className="text-indigo-600 dark:text-indigo-400" size={20} />
@@ -189,7 +122,6 @@ const UserDashboard = () => {
               analytics?.readiness_status === 'Ready' ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400' :
               analytics?.readiness_status === 'Needs Practice' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
               'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
             }`} data-testid="readiness-status">
               {analytics?.readiness_status || 'Not Ready'}
             </div>
@@ -199,17 +131,12 @@ const UserDashboard = () => {
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Growth Chart */}
-<<<<<<< HEAD
-          <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200">
-            <h2 className="text-xl font-bold mb-6">Skill Growth Over Time</h2>
-=======
           <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-bold mb-6 dark:text-white">Skill Growth Over Time</h2>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
             {hasData && analytics.growth_data.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={analytics.growth_data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#334155" : "#e2e8f0"} />
                   <XAxis dataKey="date" stroke="#64748b" />
                   <YAxis domain={[0, 10]} stroke="#64748b" />
                   <Tooltip />
@@ -226,17 +153,7 @@ const UserDashboard = () => {
             )}
           </div>
 
-          {/* Weak Areas */}
-<<<<<<< HEAD
-          <div className="bg-white p-6 rounded-xl border border-slate-200">
-            <h2 className="text-xl font-bold mb-6">Areas to Improve</h2>
-            {hasData && analytics.weak_areas.length > 0 ? (
-              <div className="space-y-4">
-                {analytics.weak_areas.map((area, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <span className="text-slate-700">{area.area}</span>
-                    <span className="text-sm text-slate-500">{area.count}x</span>
-=======
+          {/* Areas to Improve */}
           <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-bold mb-6 dark:text-white">Areas to Improve</h2>
             {hasData && analytics.weak_areas.length > 0 ? (
@@ -250,7 +167,6 @@ const UserDashboard = () => {
                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                       <div className="bg-rose-400 h-full w-3/4"></div>
                     </div>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
                   </div>
                 ))}
               </div>
@@ -259,17 +175,15 @@ const UserDashboard = () => {
                 <p>No weak areas identified yet</p>
               </div>
             )}
-<<<<<<< HEAD
-=======
 
             {/* Community Benchmark */}
-            <div className="mt-8 pt-8 border-t border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4">Community Benchmark</h3>
+            <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-4">Community Benchmark</h3>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold text-indigo-600">{analytics?.community_percentile}%</span>
-                <span className="text-slate-500 mb-1">higher than others</span>
+                <span className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">{analytics?.community_percentile}%</span>
+                <span className="text-slate-500 dark:text-slate-400 mb-1">higher than others</span>
               </div>
-              <p className="text-xs text-slate-500 mt-2">You are in the top 15% of candidates preparing for this role.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">You are in the top 15% of candidates preparing for this role.</p>
             </div>
           </div>
         </div>
@@ -323,7 +237,6 @@ const UserDashboard = () => {
             <button className="text-white bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
               Learn STAR Method
             </button>
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
           </div>
         </div>
 
@@ -339,7 +252,7 @@ const UserDashboard = () => {
           </Link>
           <Link 
             to="/practice" 
-            className="bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium flex items-center gap-2"
+            className="bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium flex items-center gap-2 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
           >
             <BookOpen size={20} />
             Practice Questions
@@ -347,17 +260,6 @@ const UserDashboard = () => {
         </div>
 
         {/* Recent Interviews */}
-<<<<<<< HEAD
-        <div className="mt-8 bg-white p-6 rounded-xl border border-slate-200">
-          <h2 className="text-xl font-bold mb-6">Recent Interviews</h2>
-          {interviews.length > 0 ? (
-            <div className="space-y-4">
-              {interviews.slice(0, 5).map((interview) => (
-                <div key={interview.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:shadow-sm transition-all">
-                  <div>
-                    <div className="font-semibold">{interview.interview_type} Interview</div>
-                    <div className="text-sm text-slate-500">
-=======
         <div className="mt-8 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Recent Interviews</h2>
           {interviews.length > 0 ? (
@@ -367,28 +269,19 @@ const UserDashboard = () => {
                   <div>
                     <div className="font-semibold dark:text-white">{interview.interview_type} Interview</div>
                     <div className="text-sm text-slate-500 dark:text-slate-400">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
                       {new Date(interview.started_at).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     {interview.overall_score && (
-<<<<<<< HEAD
-                      <div className="text-lg font-bold text-indigo-600">
-=======
                       <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
                         {interview.overall_score.toFixed(1)}/10
                       </div>
                     )}
                     {interview.status === 'completed' && (
                       <Link 
                         to={`/evaluation/${interview.id}`}
-<<<<<<< HEAD
-                        className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
-=======
                         className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm font-medium"
->>>>>>> 4a36452 (Build With AI 2 - fixed login, signup, env and dependencies)
                       >
                         View Report
                       </Link>
