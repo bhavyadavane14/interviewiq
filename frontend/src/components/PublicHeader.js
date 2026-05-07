@@ -20,8 +20,15 @@ const PublicHeader = () => {
           <Brain className="text-indigo-600 dark:text-indigo-400" size={32} />
           <span className="text-2xl font-bold text-slate-900 dark:text-white">InterviewIQ</span>
         </Link>
-        <div className="flex items-center gap-4">
-          {currentPath !== '/' && (
+        <div className="flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-6 mr-4">
+            <Link to="/how-it-works" className={isActive('/how-it-works')}>How It Works</Link>
+            <Link to="/interview-types" className={isActive('/interview-types')}>Interview Types</Link>
+            <Link to="/features" className={isActive('/features')}>Features</Link>
+            <Link to="/why-us" className={isActive('/why-us')}>Why Us</Link>
+          </nav>
+
+          <div className="flex items-center gap-4">
             <button 
               onClick={toggleTheme}
               className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
@@ -29,18 +36,18 @@ const PublicHeader = () => {
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-          )}
 
-          <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-          <Link to="/login" className="btn-primary">Login</Link>
-          
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
-            aria-label="Toggle Menu"
-          >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+            <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+            <Link to="/login" className="btn-primary">Login</Link>
+            
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+              aria-label="Toggle Menu"
+            >
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
 
       </nav>
