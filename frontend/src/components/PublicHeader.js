@@ -20,42 +20,29 @@ const PublicHeader = () => {
           <Brain className="text-indigo-600 dark:text-indigo-400" size={32} />
           <span className="text-2xl font-bold text-slate-900 dark:text-white">InterviewIQ</span>
         </Link>
-        <div className="flex items-center gap-6">
-          <nav className="hidden lg:flex items-center gap-6 mr-4">
-            <Link to="/how-it-works" className={isActive('/how-it-works')}>How It Works</Link>
-            <Link to="/interview-types" className={isActive('/interview-types')}>Interview Types</Link>
-            <Link to="/features" className={isActive('/features')}>Features</Link>
-            <Link to="/why-us" className={isActive('/why-us')}>Why Us</Link>
-          </nav>
 
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-              aria-label="Toggle Theme"
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
-            <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-            <Link to="/login" className="btn-primary">Login</Link>
-            
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
-              aria-label="Toggle Menu"
-            >
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
+          <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          <Link to="/login" className="btn-primary">Login</Link>
+          
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all"
+            aria-label="Toggle Menu"
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
 
       </nav>
 
       {/* Menu Overlay */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-6 px-6 space-y-4 shadow-xl animate-in slide-in-from-top duration-300 z-40">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-4">
+        <div className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-6 px-6 shadow-xl animate-in slide-in-from-top duration-300 z-40">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link to="/" onClick={() => setIsMenuOpen(false)} className={`p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all ${isActive('/')}`}>
+              <div className="font-bold text-lg">Home</div>
+              <p className="text-sm text-slate-500">Back to start</p>
+            </Link>
             <Link to="/how-it-works" onClick={() => setIsMenuOpen(false)} className={`p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all ${isActive('/how-it-works')}`}>
               <div className="font-bold text-lg">How It Works</div>
               <p className="text-sm text-slate-500">Learn about our AI interview process</p>
