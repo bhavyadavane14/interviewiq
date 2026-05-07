@@ -8,7 +8,7 @@ import DashboardNavbar from '../components/DashboardNavbar';
 
 const UserDashboard = () => {
   const { user } = useAuth();
-  const [analytics, setAnalytics] = useState(None);
+  const [analytics, setAnalytics] = useState(null);
   const [interviews, setInterviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

@@ -40,14 +40,6 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Link to="/signup" className="btn-primary flex items-center gap-2" data-testid="hero-signup-btn">
-                Start Mock Interview <ArrowRight size={20} />
-              </Link>
-              <Link to="/login" className="bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium">
-                Login
-              </Link>
-            </div>
           </div>
           <div className="hidden lg:block relative">
             <div className="absolute inset-0 bg-indigo-500 rounded-3xl blur-3xl opacity-20 transform rotate-6"></div>

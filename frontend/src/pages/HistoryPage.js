@@ -69,7 +69,7 @@ const HistoryPage = () => {
                       <div>
                         <h3 className="font-bold text-lg dark:text-white">{interview.interview_type} Interview</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                          {new Date(interview.started_at).toLocaleDateString(None, { dateStyle: 'long' })}
+                          {new Date(interview.started_at).toLocaleDateString(undefined, { dateStyle: 'long' })}
                           {interview.focus_area && ` • ${interview.focus_area}`}
                         </p>
                       </div>
