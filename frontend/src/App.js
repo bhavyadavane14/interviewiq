@@ -15,6 +15,8 @@ import EvaluationPage from './pages/EvaluationPage';
 import PracticePage from './pages/PracticePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUserDetail from './pages/AdminUserDetail';
+import AnalyticsPage from './pages/AnalyticsPage';
+import HistoryPage from './pages/HistoryPage';
 
 // New pages
 import HowItWorksPage from './pages/HowItWorksPage';
@@ -45,6 +47,20 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   return children;
 };
 
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (user) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -62,8 +78,9 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsOfServicePage />} />
 
       {/* Auth */}
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+      <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
 
       {/* Protected */}
       <Route
@@ -107,6 +124,24 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <PracticePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <AnalyticsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/history"
+        element={
+          <ProtectedRoute>
+            <HistoryPage />
           </ProtectedRoute>
         }
       />

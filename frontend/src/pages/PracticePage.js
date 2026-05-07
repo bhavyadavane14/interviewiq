@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { practiceAPI } from '../utils/api';
-import { Brain, Download, BookOpen, Check } from 'lucide-react';
+import { Download, BookOpen, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
+import DashboardNavbar from '../components/DashboardNavbar';
 
 const PracticePage = () => {
   const [category, setCategory] = useState('HR');
@@ -66,19 +67,8 @@ const PracticePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <Brain className="text-indigo-600" size={32} />
-            <span className="text-2xl font-bold">InterviewIQ</span>
-          </Link>
-          <Link to="/dashboard" className="text-indigo-600 hover:text-indigo-700 font-medium">
-            Back to Dashboard
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <DashboardNavbar />
 
       <div className="max-w-5xl mx-auto px-6 py-12" data-testid="practice-page">
         <div className="mb-8">
