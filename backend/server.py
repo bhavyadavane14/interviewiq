@@ -1,7 +1,8 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, init_db
+
 import os
 import logging
 from pathlib import Path
@@ -19,14 +20,7 @@ from ai_service import AIService
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-mongo_url = os.environ.get("MONGO_URL")
-db_name = os.environ.get("Interview_143", "interviewiq")
-
-if not mongo_url:
-    raise RuntimeError("MONGO_URL is not set in environment variables")
-
-client = AsyncIOMotorClient(mongo_url)
-db = client["Interview_143"]
+# db initialization moved to database.py
 
 
 app = FastAPI()
@@ -638,6 +632,9 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
+    # Ensure database tables exist
+    await init_db()
+    
     # Ensure default admin user exists
     admin_email = "admin@interviewiq.com"
     existing_admin = await db.users.find_one({"email": admin_email})
@@ -663,4 +660,5 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    # SQLite connection is handled by SQLAlchemy engine
+    pass
