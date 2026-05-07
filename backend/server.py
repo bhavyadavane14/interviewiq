@@ -246,7 +246,7 @@ async def start_interview(interview_data: InterviewStart, current_user: dict = D
     await db.interviews.insert_one(interview_dict)
     return Interview(**interview_dict)
 
-@api_router.post("/interviews/answer")
+@api_router.post("/interviews/submit-answer")
 async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(get_current_user)):
     interview = await db.interviews.find_one(
         {"id": answer_data.interview_id, "user_id": current_user["sub"]},
@@ -487,7 +487,7 @@ async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)
         "weak_areas": [{"area": area, "count": count} for area, count in top_weak_areas]
     }
 
-@api_router.get("/practice/questions/{category}")
+@api_router.get("/practice/questions")
 async def get_practice_questions(category: InterviewType):
     questions = QUESTION_BANK.get(category, [])
     return [
