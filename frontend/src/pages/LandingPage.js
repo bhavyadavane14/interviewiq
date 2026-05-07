@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, Target, Sparkles, TrendingUp, BarChart3, CheckCircle, XCircle } from 'lucide-react';
+import { Brain, Target, Sparkles, TrendingUp, BarChart3, CheckCircle, XCircle } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
