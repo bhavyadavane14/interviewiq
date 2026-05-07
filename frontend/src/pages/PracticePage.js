@@ -72,8 +72,8 @@ const PracticePage = () => {
 
       <div className="max-w-5xl mx-auto px-6 py-12" data-testid="practice-page">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Practice Questions</h1>
-          <p className="text-slate-600">Practice first, then attempt a mock interview for evaluation</p>
+          <h1 className="text-4xl font-bold mb-2 dark:text-white">Practice Questions</h1>
+          <p className="text-slate-600 dark:text-slate-400">Practice first, then attempt a mock interview for evaluation</p>
         </div>
 
         {/* Category Selection */}
@@ -85,7 +85,7 @@ const PracticePage = () => {
               className={`px-6 py-2.5 rounded-full font-medium transition-all ${
                 category === cat
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
               data-testid={`category-${cat.toLowerCase()}`}
             >
@@ -97,7 +97,7 @@ const PracticePage = () => {
         {/* Download Button */}
         <button
           onClick={downloadPDF}
-          className="mb-6 flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2.5 font-medium"
+          className="mb-6 flex items-center gap-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full px-6 py-2.5 font-medium"
           data-testid="download-pdf-btn"
         >
           <Download size={20} />
@@ -110,28 +110,28 @@ const PracticePage = () => {
             <div className="text-center py-12 text-slate-400">Loading questions...</div>
           ) : (
             questions.map((q, index) => (
-              <div key={q.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden" data-testid={`question-${index}`}>
+              <div key={q.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden" data-testid={`question-${index}`}>
                 <button
                   onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                  className="w-full p-6 text-left flex items-start justify-between hover:bg-slate-50 transition-all"
+                  className="w-full p-6 text-left flex items-start justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
                 >
                   <div className="flex-1">
-                    <div className="text-sm font-semibold text-indigo-600 mb-1">
+                    <div className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
                       Question {index + 1}
                     </div>
-                    <div className="font-semibold text-lg">{q.question}</div>
+                    <div className="font-semibold text-lg dark:text-white">{q.question}</div>
                   </div>
                   <BookOpen className="text-slate-400 flex-shrink-0 ml-4" size={20} />
                 </button>
 
                 {expandedIndex === index && (
-                  <div className="px-6 pb-6 space-y-4 border-t border-slate-200 pt-4">
+                  <div className="px-6 pb-6 space-y-4 border-t border-slate-200 dark:border-slate-800 pt-4">
                     {!attemptedAnswers[index] ? (
                       <div>
-                        <label className="block text-sm font-medium mb-2">Your Answer:</label>
+                        <label className="block text-sm font-medium mb-2 dark:text-slate-300">Your Answer:</label>
                         <textarea
                           rows={4}
-                          className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                          className="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none text-slate-900 dark:text-white"
                           placeholder="Type your answer here..."
                         />
                         <button
@@ -145,15 +145,15 @@ const PracticePage = () => {
                     ) : (
                       <div className="space-y-4">
                         <div>
-                          <div className="text-sm font-medium text-teal-600 mb-2">✓ Ideal Answer:</div>
-                          <div className="bg-teal-50 border border-teal-200 p-4 rounded-lg text-slate-700">
+                          <div className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-2">✓ Ideal Answer:</div>
+                          <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 p-4 rounded-lg text-slate-700 dark:text-slate-300">
                             {q.ideal_answer}
                           </div>
                         </div>
 
                         <div>
-                          <div className="text-sm font-medium text-indigo-600 mb-2">Key Points to Cover:</div>
-                          <ul className="list-disc list-inside space-y-1 text-slate-700">
+                          <div className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2">Key Points to Cover:</div>
+                          <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
                             {q.key_points.map((point, i) => (
                               <li key={i}>{point}</li>
                             ))}
@@ -161,8 +161,8 @@ const PracticePage = () => {
                         </div>
 
                         <div>
-                          <div className="text-sm font-medium text-red-600 mb-2">Common Mistakes to Avoid:</div>
-                          <ul className="list-disc list-inside space-y-1 text-slate-700">
+                          <div className="text-sm font-medium text-red-600 dark:text-red-400 mb-2">Common Mistakes to Avoid:</div>
+                          <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300">
                             {q.common_mistakes.map((mistake, i) => (
                               <li key={i}>{mistake}</li>
                             ))}
@@ -178,9 +178,9 @@ const PracticePage = () => {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 bg-gradient-to-br from-indigo-50 to-teal-50 p-8 rounded-2xl border border-indigo-200 text-center">
-          <h2 className="text-2xl font-bold mb-4">Ready for a Full Mock Interview?</h2>
-          <p className="text-slate-600 mb-6">Test your skills with AI-powered adaptive questions and get detailed feedback</p>
+        <div className="mt-12 bg-gradient-to-br from-indigo-50 to-teal-50 dark:from-indigo-900/20 dark:to-teal-900/20 p-8 rounded-2xl border border-indigo-200 dark:border-indigo-800 text-center">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">Ready for a Full Mock Interview?</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">Test your skills with AI-powered adaptive questions and get detailed feedback</p>
           <Link to="/interview/start" className="btn-primary inline-block">
             Start Mock Interview
           </Link>
