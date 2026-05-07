@@ -5,6 +5,7 @@ const BACKEND_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 const api = axios.create({
   baseURL: `${BACKEND_URL}/api`,
+  timeout: 10000, // 10 seconds
 });
 
 // Attach token automatically

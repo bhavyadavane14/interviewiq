@@ -19,7 +19,6 @@ const PublicHeader = () => {
           <span className="text-2xl font-bold text-slate-900 dark:text-white">InterviewIQ</span>
         </Link>
 
-        <div className="flex items-center gap-4">
           <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
           <Link to="/login" className="btn-primary">Login</Link>
           
@@ -30,8 +29,7 @@ const PublicHeader = () => {
           >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
-        </div>
-
+        
       </nav>
 
       {/* Menu Overlay */}

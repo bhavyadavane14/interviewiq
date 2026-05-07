@@ -20,10 +20,14 @@ export const AuthProvider = ({ children }) => {
         const response = await authAPI.getMe();
         setUser(response.data);
       } catch (error) {
+        console.error("Auth check failed:", error);
         localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const login = async (email, password) => {
