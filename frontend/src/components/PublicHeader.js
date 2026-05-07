@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Brain, Sun, Moon, Menu, X } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { Brain, Menu, X } from 'lucide-react';
 
 const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
   const currentPath = location.pathname;
 
