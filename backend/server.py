@@ -1,8 +1,8 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from database import db, init_db
-
+from database import db, init_db, engine
+from sqlalchemy import text
 import os
 import logging
 from pathlib import Path
@@ -496,6 +496,16 @@ async def get_evaluation(interview_id: str, current_user: dict = Depends(get_cur
     if not evaluation:
         raise HTTPException(status_code=404, detail="Evaluation not found")
     
+    # Sanitize mistakes for legacy data (convert strings to structured dicts)
+    if "mistakes" in evaluation:
+        sanitized_mistakes = []
+        for m in evaluation["mistakes"]:
+            if isinstance(m, str):
+                sanitized_mistakes.append({"what_went_wrong": m, "correction": "Follow best practices for this area."})
+            else:
+                sanitized_mistakes.append(m)
+        evaluation["mistakes"] = sanitized_mistakes
+    
     interview = await db.interviews.find_one({"id": interview_id}, {"_id": 0})
     
     detailed_feedback = []
@@ -542,11 +552,11 @@ async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)
     else:
         growth_data = []
         for interview in interviews:
-            if interview.get("overall_score"):
+            if interview.get("overall_score") and interview.get("completed_at"):
                 growth_data.append({
-                    "date": interview["completed_at"][:10],
+                    "date": str(interview["completed_at"])[:10],
                     "score": interview["overall_score"],
-                    "type": interview["interview_type"]
+                    "type": str(interview.get("interview_type", "HR"))
                 })
         
         weak_areas = {}
@@ -724,10 +734,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Self-healing database migration
+async def migrate_db():
+    try:
+        async with engine.begin() as conn:
+            # Check for detailed_feedback in evaluations
+            await conn.execute(text("ALTER TABLE evaluations ADD COLUMN detailed_feedback JSON DEFAULT '[]'"))
+            print("Successfully added detailed_feedback column")
+    except Exception as e:
+        # If column already exists, this will fail silently which is fine
+        print(f"Migration notice: {e}")
+
 @app.on_event("startup")
 async def startup_event():
     # Ensure database tables exist
     await init_db()
+    await migrate_db()
     
     # Ensure default admin user exists
     admin_email = "admin@interviewiq.com"

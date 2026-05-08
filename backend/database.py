@@ -1,7 +1,7 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, JSON, ForeignKey
+from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, JSON, ForeignKey, text
 from sqlalchemy.future import select
 from datetime import datetime, timezone
 import uuid
