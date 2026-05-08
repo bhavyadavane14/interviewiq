@@ -282,10 +282,16 @@ async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
     
+    # Robustly determine interview type from string
+    it_str = interview["interview_type"]
+    it_enum = InterviewType.HR
+    if "Technical" in it_str: it_enum = InterviewType.TECHNICAL
+    elif "Behavioral" in it_str: it_enum = InterviewType.BEHAVIORAL
+    
     evaluation = await ai_service.evaluate_answer(
         question=question["question"],
         answer=answer_data.answer_text,
-        interview_type=InterviewType(interview["interview_type"])
+        interview_type=it_enum
     )
     
     answer_obj = {
@@ -302,7 +308,7 @@ async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(
     next_question = None
     if len(interview["answers"]) < 5:
         next_question = await ai_service.generate_question(
-            interview_type=InterviewType(interview["interview_type"]),
+            interview_type=it_enum,
             question_number=len(interview["answers"]) + 1,
             previous_answers=interview["answers"],
             focus_area=interview.get("focus_area")
