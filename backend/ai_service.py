@@ -36,6 +36,18 @@ class AIService:
         }
 
     async def evaluate_answer(self, question, answer, interview_type):
+        # Basic check for gibberish or extremely short answers
+        if len(answer.strip()) < 10 or not any(c.isalpha() for c in answer):
+            return {
+                "score": 1.0,
+                "clarity": 1.0,
+                "confidence": 1.0,
+                "structure": 1.0,
+                "relevance": 1.0,
+                "feedback": "This answer is non-sensical or too brief. Please provide a meaningful response to the question.",
+                "weakness_identified": "Invalid or non-responsive answer"
+            }
+
         # Mock evaluation logic - in a real app, this would call GPT/Gemini
         score = random.uniform(6.5, 9.5)
         return {

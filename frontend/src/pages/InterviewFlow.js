@@ -95,9 +95,15 @@ const InterviewFlow = () => {
       ]);
 
       if (response.data.is_complete) {
-        await interviewAPI.complete(interviewId);
-        toast.success('Interview completed!');
-        navigate(`/evaluation/${interviewId}`);
+        setLoading(true);
+        try {
+          await interviewAPI.complete(interviewId);
+          toast.success('Interview completed!');
+          navigate(`/evaluation/${interviewId}`);
+        } catch (err) {
+          toast.error('Failed to generate evaluation. Please check your history later.');
+          navigate('/dashboard');
+        }
       } else {
         const nextQ = response.data.next_question;
         setCurrentQuestion({
