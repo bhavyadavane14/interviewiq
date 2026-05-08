@@ -25,6 +25,7 @@ export const authAPI = {
 
 export const interviewAPI = {
   start: (data) => api.post("/interviews/start", data),
+  get: (id) => api.get(`/interviews/${id}`),
   submitAnswer: (data) => api.post("/interviews/submit-answer", data),
   complete: (interviewId) => api.post(`/interviews/${interviewId}/complete`),
   getHistory: () => api.get("/interviews/history"),

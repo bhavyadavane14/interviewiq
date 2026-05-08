@@ -45,14 +45,27 @@ const InterviewFlow = () => {
 
   const loadInterview = async () => {
     try {
-      const response = await interviewAPI.getHistory();
-      const currentInterview = response.data.find(i => i.id === interviewId);
+      const response = await interviewAPI.get(interviewId);
+      const currentInterview = response.data;
       setInterview(currentInterview);
+      
+      if (currentInterview.status === 'completed') {
+        navigate(`/evaluation/${interviewId}`);
+        return;
+      }
+
       if (currentInterview && currentInterview.questions.length > 0) {
-        setCurrentQuestion(currentInterview.questions[currentInterview.answers.length]);
+        const nextIdx = currentInterview.answers.length;
+        if (nextIdx < currentInterview.questions.length) {
+          setCurrentQuestion(currentInterview.questions[nextIdx]);
+        } else if (nextIdx >= 5) {
+          // If 5 answers but not completed in status, navigate to evaluation
+          navigate(`/evaluation/${interviewId}`);
+        }
       }
     } catch (error) {
-      toast.error('Failed to load interview');
+      toast.error('Failed to load interview. Returning to dashboard...');
+      navigate('/dashboard');
     }
   };
 

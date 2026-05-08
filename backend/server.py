@@ -268,6 +268,16 @@ async def start_interview(interview_data: InterviewStart, current_user: dict = D
     await db.interviews.insert_one(interview_dict)
     return Interview(**interview_dict)
 
+@api_router.get("/interviews/{interview_id}", response_model=Interview)
+async def get_single_interview(interview_id: str, current_user: dict = Depends(get_current_user)):
+    interview = await db.interviews.find_one(
+        {"id": interview_id, "user_id": current_user["sub"]},
+        {"_id": 0}
+    )
+    if not interview:
+        raise HTTPException(status_code=404, detail="Interview not found")
+    return Interview(**interview)
+
 @api_router.post("/interviews/submit-answer")
 async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(get_current_user)):
     interview = await db.interviews.find_one(
