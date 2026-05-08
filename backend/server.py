@@ -180,10 +180,10 @@ async def signup(user_data: UserCreate):
         "name": user_data.name,
         "role": Role.USER.value,
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "last_login": None,
+        "last_login": datetime.now(timezone.utc).isoformat(),
         "total_interviews": 0,
         "average_score": 0.0,
-        "streak": 0,
+        "streak": 1,
         "readiness_status": ReadinessStatus.NOT_READY.value,
         "consent": user_data.consent
     }
@@ -200,11 +200,32 @@ async def login(login_data: UserLogin):
     if not user or not verify_password(login_data.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    now = datetime.now(timezone.utc)
+    last_login_str = user.get("last_login")
+    new_streak = user.get("streak", 1)
+    
+    if last_login_str:
+        try:
+            last_login = datetime.fromisoformat(last_login_str)
+            delta = (now.date() - last_login.date()).days
+            if delta == 1:
+                new_streak += 1
+            elif delta > 1:
+                new_streak = 1
+        except Exception:
+            new_streak = 1
+    else:
+        new_streak = 1
+
     await db.users.update_one(
         {"email": login_data.email},
-        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+        {"$set": {
+            "last_login": now.isoformat(),
+            "streak": new_streak
+        }}
     )
     
+    user["streak"] = new_streak
     token = create_access_token({"sub": user["id"], "email": user["email"], "role": user["role"]})
     user.pop("password", None)
     return TokenResponse(access_token=token, user=User(**user))
