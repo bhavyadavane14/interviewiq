@@ -276,6 +276,13 @@ async def get_single_interview(interview_id: str, current_user: dict = Depends(g
     )
     if not interview:
         raise HTTPException(status_code=404, detail="Interview not found")
+    
+    # Sanitize for Pydantic model
+    it_str = interview.get("interview_type", "HR")
+    if "Technical" in it_str: interview["interview_type"] = InterviewType.TECHNICAL
+    elif "Behavioral" in it_str: interview["interview_type"] = InterviewType.BEHAVIORAL
+    else: interview["interview_type"] = InterviewType.HR
+    
     return Interview(**interview)
 
 @api_router.post("/interviews/submit-answer")
@@ -466,8 +473,18 @@ async def get_interview_history(current_user: dict = Depends(get_current_user)):
         {"user_id": current_user["sub"]},
         {"_id": 0}
     ).sort("started_at", -1).to_list(100)
-    
-    return interviews
+    processed = []
+    for i in interviews:
+        it_str = i.get("interview_type", "HR")
+        if "Technical" in it_str: i["interview_type"] = InterviewType.TECHNICAL
+        elif "Behavioral" in it_str: i["interview_type"] = InterviewType.BEHAVIORAL
+        else: i["interview_type"] = InterviewType.HR
+        try:
+            processed.append(Interview(**i))
+        except:
+            processed.append(i) # Fallback to raw data if validation still fails
+            
+    return processed
 
 @api_router.get("/evaluations/{interview_id}")
 async def get_evaluation(interview_id: str, current_user: dict = Depends(get_current_user)):
