@@ -365,25 +365,36 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
     
     mistakes = []
     tips = []
+    detailed_feedback = []
     
     for ans in interview["answers"]:
-        if ans["score"] < 7.0:
-            feedback = await ai_service.generate_feedback(
-                question=ans["question"],
-                user_answer=ans["answer"],
-                score=ans["score"]
-            )
-            
+        feedback = await ai_service.generate_feedback(
+            question=ans["question"],
+            user_answer=ans["answer"],
+            score=ans["score"]
+        )
+        
+        # Add to detailed per-question feedback
+        detailed_feedback.append({
+            "question": ans["question"],
+            "your_answer": ans["answer"],
+            "score": ans["score"],
+            "improved_answer": feedback.get("improved_answer"),
+            "why_improved": feedback.get("why_improved"),
+            "explainability_tags": ["Clarity" if ans["evaluation"]["clarity"] > 7 else "Needs Clarity"]
+        })
+        
+        if ans["score"] < 7.5:
             if feedback.get("mistakes"):
-                mistakes.extend(feedback["mistakes"][:1])
+                mistakes.extend(feedback["mistakes"])
             if feedback.get("tips"):
-                tips.extend(feedback["tips"][:1])
+                tips.extend(feedback["tips"])
     
     if not tips:
         tips = ["Practice STAR method", "Use specific examples", "Be concise and structured"]
     
-    tips = list(set(tips))[:3]
-    mistakes = mistakes[:3]
+    tips = list(set(tips))[:5]
+    mistakes = mistakes[:4] # Keep a reasonable number of mistakes
     
     if overall_score >= 8.0:
         readiness = ReadinessStatus.READY
@@ -402,6 +413,7 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
         "strengths": strengths,
         "mistakes": mistakes,
         "improvement_tips": tips,
+        "detailed_feedback": detailed_feedback,
         "readiness_flag": readiness.value,
         "created_at": datetime.now(timezone.utc).isoformat()
     }

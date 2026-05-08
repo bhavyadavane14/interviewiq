@@ -67,6 +67,7 @@ class EvaluationDB(Base):
     strengths = Column(JSON, default=[])
     mistakes = Column(JSON, default=[])
     improvement_tips = Column(JSON, default=[])
+    detailed_feedback = Column(JSON, default=[])
     readiness_flag = Column(String)
     created_at = Column(String)
 

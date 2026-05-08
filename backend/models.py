@@ -75,6 +75,7 @@ class Evaluation(BaseModel):
     strengths: List[str]
     mistakes: List[Dict[str, str]]
     improvement_tips: List[str]
+    detailed_feedback: List[Dict[str, Any]] = []
     readiness_flag: ReadinessStatus
     created_at: str
 

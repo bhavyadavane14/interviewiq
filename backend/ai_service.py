@@ -49,10 +49,23 @@ class AIService:
         }
 
     async def generate_feedback(self, question, user_answer, score):
+        # Specific feedback based on score
+        if score < 5.0:
+            mistakes = [
+                {"what_went_wrong": "The answer was too brief and lacked specific details.", "correction": "Use the STAR method to provide a structured, detailed response."},
+                {"what_went_wrong": "Failed to address the core of the question.", "correction": "Listen carefully to the prompt and ensure your first sentence directly answers it."}
+            ]
+        elif score < 7.5:
+            mistakes = [
+                {"what_went_wrong": "Good start, but missing clear outcomes or results.", "correction": "Always conclude your answer with the impact or result of your actions."},
+                {"what_went_wrong": "Used some filler words like 'um' or 'basically'.", "correction": "Pause briefly to think instead of using filler words."}
+            ]
+        else:
+            mistakes = []
+
         return {
-            "mistakes": ["Needs more technical depth", "Avoid filler words"],
-            "tips": ["Use the STAR method", "Connect your answer to the job role"],
-            "improved_answer": "An improved version of your answer would include specific metrics and outcomes.",
-            "why_improved": "This version is more impact-oriented and structured.",
-            "mistakes": ["Vague descriptions"]
+            "mistakes": mistakes,
+            "tips": ["Practice structured storytelling", "Focus on quantifiable results", "Maintain better eye contact simulation"],
+            "improved_answer": f"A more complete answer to '{question}' would be: 'In my previous role, I encountered [Situation]. I was responsible for [Task]. I implemented [Action], which resulted in [Result].'",
+            "why_improved": "This version follows the STAR method and provides clear, measurable outcomes."
         }
