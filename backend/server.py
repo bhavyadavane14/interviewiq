@@ -183,8 +183,9 @@ async def signup(user_data: UserCreate):
         "last_login": None,
         "total_interviews": 0,
         "average_score": 0.0,
-        "streak": 1,
-        "readiness_status": ReadinessStatus.NOT_READY.value
+        "streak": 0,
+        "readiness_status": ReadinessStatus.NOT_READY.value,
+        "consent": user_data.consent
     }
     
     await db.users.insert_one(user_dict)
@@ -461,26 +462,17 @@ async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)
     ).sort("completed_at", 1).to_list(100)
     
     if not interviews:
-        # Provide comprehensive initial data to make dashboard look alive
-        growth_data = [
-            {"date": "2024-05-01", "score": 6.5, "type": "Mock"},
-            {"date": "2024-05-03", "score": 7.2, "type": "Mock"},
-            {"date": "2024-05-05", "score": 8.0, "type": "Mock"}
-        ]
-        top_weak_areas = [
-            {"area": "System Design", "count": 1},
-            {"area": "Behavioral Responses", "count": 1},
-            {"area": "Data Structures", "count": 1}
-        ]
+        growth_data = []
+        top_weak_areas = []
         skill_breakdown = [
-            {"subject": "Technical", "A": 85, "fullMark": 100},
-            {"subject": "Clarity", "A": 70, "fullMark": 100},
-            {"subject": "Confidence", "A": 90, "fullMark": 100},
-            {"subject": "Structure", "A": 65, "fullMark": 100},
-            {"subject": "Relevance", "A": 80, "fullMark": 100}
+            {"subject": "Technical", "A": 0, "fullMark": 100},
+            {"subject": "Clarity", "A": 0, "fullMark": 100},
+            {"subject": "Confidence", "A": 0, "fullMark": 100},
+            {"subject": "Structure", "A": 0, "fullMark": 100},
+            {"subject": "Relevance", "A": 0, "fullMark": 100}
         ]
-        goal_progress = {"label": "Weekly Interviews", "current": 2, "target": 5}
-        community_percentile = 85
+        goal_progress = {"label": "Weekly Interviews", "current": 0, "target": 5}
+        community_percentile = 0
     else:
         growth_data = []
         for interview in interviews:
@@ -512,7 +504,7 @@ async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)
         community_percentile = 75
 
     return {
-        "overall_score": user["average_score"] or 7.5 if not interviews else user["average_score"],
+        "overall_score": user["average_score"],
         "total_interviews": user["total_interviews"],
         "streak": user["streak"],
         "readiness_status": user["readiness_status"],
