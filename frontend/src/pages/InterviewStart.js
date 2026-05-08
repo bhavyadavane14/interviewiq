@@ -55,17 +55,6 @@ const InterviewStart = () => {
           </div>
 
           <div>
-
-            <label className="block text-sm font-medium mb-2">Focus Area (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g., Leadership, Python, Communication"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none"
-              value={focusArea}
-              onChange={(e) => setFocusArea(e.target.value)}
-              data-testid="focus-area-input"
-            />
-=======
             <label className="block text-sm font-medium mb-2">Select Focus Area</label>
             <select
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none bg-white"
@@ -107,15 +96,11 @@ const InterviewStart = () => {
               </optgroup>
               <option value="Quality Assurance (QA)">Quality Assurance (QA)</option>
             </select>
-
           </div>
 
           <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
             <h3 className="font-semibold mb-2">What to expect:</h3>
             <ul className="text-sm text-slate-600 space-y-1">
-
-              <li>• 5 adaptive questions based on your answers</li>
-=======
               <li>• 10 adaptive questions tailored to your focus area</li>
 
               <li>• AI adjusts difficulty as you progress</li>
