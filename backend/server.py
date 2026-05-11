@@ -277,6 +277,10 @@ async def get_single_interview(interview_id: str, current_user: dict = Depends(g
     if not interview:
         raise HTTPException(status_code=404, detail="Interview not found")
     
+    # Normalize detailed_feedback
+    if interview.get("detailed_feedback") is None:
+        interview["detailed_feedback"] = []
+    
     # Sanitize for Pydantic model
     it_str = interview.get("interview_type", "HR")
     if "Technical" in it_str: interview["interview_type"] = InterviewType.TECHNICAL
@@ -475,6 +479,10 @@ async def get_interview_history(current_user: dict = Depends(get_current_user)):
     ).sort("started_at", -1).to_list(100)
     processed = []
     for i in interviews:
+        # Normalize detailed_feedback for legacy records
+        if i.get("detailed_feedback") is None:
+            i["detailed_feedback"] = []
+            
         it_str = i.get("interview_type", "HR")
         if "Technical" in it_str: i["interview_type"] = InterviewType.TECHNICAL
         elif "Behavioral" in it_str: i["interview_type"] = InterviewType.BEHAVIORAL
@@ -738,12 +746,22 @@ logger = logging.getLogger(__name__)
 async def migrate_db():
     try:
         async with engine.begin() as conn:
-            # Check for detailed_feedback in evaluations
-            await conn.execute(text("ALTER TABLE evaluations ADD COLUMN detailed_feedback JSON DEFAULT '[]'"))
-            print("Successfully added detailed_feedback column")
+            # Add detailed_feedback column if missing
+            try:
+                await conn.execute(text("ALTER TABLE evaluations ADD COLUMN detailed_feedback TEXT"))
+                logger.info("Added detailed_feedback column to evaluations")
+            except Exception as e:
+                logger.debug(f"Column detailed_feedback might already exist: {e}")
+                
+            # Add mistakes column if missing (legacy check)
+            try:
+                await conn.execute(text("ALTER TABLE evaluations ADD COLUMN mistakes TEXT"))
+                logger.info("Added mistakes column to evaluations")
+            except Exception as e:
+                logger.debug(f"Column mistakes might already exist: {e}")
+                
     except Exception as e:
-        # If column already exists, this will fail silently which is fine
-        print(f"Migration notice: {e}")
+        logger.error(f"Critical Migration error: {e}")
 
 @app.on_event("startup")
 async def startup_event():
