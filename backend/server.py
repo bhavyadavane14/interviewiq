@@ -488,9 +488,9 @@ async def get_interview_history(current_user: dict = Depends(get_current_user)):
         elif "Behavioral" in it_str: i["interview_type"] = InterviewType.BEHAVIORAL
         else: i["interview_type"] = InterviewType.HR
         try:
-            processed.append(Interview(**i))
+            processed.append(Interview(**i).model_dump())
         except:
-            processed.append(i) # Fallback to raw data if validation still fails
+            processed.append(i) # Fallback to raw data
             
     return processed
 
@@ -570,9 +570,11 @@ async def get_dashboard_analytics(current_user: dict = Depends(get_current_user)
         weak_areas = {}
         for interview in interviews:
             for ans in interview.get("answers", []):
-                weakness = ans.get("evaluation", {}).get("weakness_identified", "")
-                if weakness:
-                    weak_areas[weakness] = weak_areas.get(weakness, 0) + 1
+                eval_data = ans.get("evaluation")
+                if isinstance(eval_data, dict):
+                    weakness = eval_data.get("weakness_identified", "")
+                    if weakness:
+                        weak_areas[weakness] = weak_areas.get(weakness, 0) + 1
         
         top_weak_areas = [{"area": area, "count": count} for area, count in sorted(weak_areas.items(), key=lambda x: x[1], reverse=True)[:3]]
         
