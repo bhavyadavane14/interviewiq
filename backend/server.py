@@ -395,8 +395,18 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
     if not interview:
         raise HTTPException(status_code=404, detail="Interview not found")
     
+    # IDEMPOTENT: If already completed, return existing evaluation
+    if interview.get("status") == "completed":
+        existing_eval = await db.evaluations.find_one(
+            {"interview_id": interview_id, "user_id": current_user["sub"]},
+            {"_id": 0}
+        )
+        if existing_eval:
+            return Evaluation(**existing_eval)
+        # If status=completed but no eval record, fall through to regenerate it
+    
     if len(interview["answers"]) < 5:
-        raise HTTPException(status_code=400, detail="Interview not complete")
+        raise HTTPException(status_code=400, detail="Interview not complete — not enough answers submitted")
     
     scores = [ans["score"] for ans in interview["answers"]]
     overall_score = sum(scores) / len(scores)
@@ -408,16 +418,10 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
         "relevance": sum(ans["evaluation"]["relevance"] for ans in interview["answers"]) / len(interview["answers"])
     }
     
-    weak_areas = []
-    for key, value in breakdown.items():
-        if value < 6.5:
-            weak_areas.append(key.capitalize())
-    
     strengths = []
     for key, value in breakdown.items():
         if value >= 8.0:
             strengths.append(f"Strong {key}")
-    
     if not strengths:
         strengths = ["Completed the interview", "Attempted all questions"]
     
@@ -431,8 +435,6 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
             user_answer=ans["answer"],
             score=ans["score"]
         )
-        
-        # Add to detailed per-question feedback
         detailed_feedback.append({
             "question": ans["question"],
             "your_answer": ans["answer"],
@@ -441,7 +443,6 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
             "why_improved": feedback.get("why_improved"),
             "explainability_tags": ["Clarity" if ans["evaluation"]["clarity"] > 7 else "Needs Clarity"]
         })
-        
         if ans["score"] < 7.5:
             if feedback.get("mistakes"):
                 mistakes.extend(feedback["mistakes"])
@@ -450,9 +451,8 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
     
     if not tips:
         tips = ["Practice STAR method", "Use specific examples", "Be concise and structured"]
-    
     tips = list(set(tips))[:5]
-    mistakes = mistakes[:4] # Keep a reasonable number of mistakes
+    mistakes = mistakes[:4]
     
     if overall_score >= 8.0:
         readiness = ReadinessStatus.READY
@@ -476,6 +476,8 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
+    # Upsert evaluation — delete old one if exists (handles re-complete edge case)
+    await db.evaluations.delete_many({"interview_id": interview_id, "user_id": current_user["sub"]})
     await db.evaluations.insert_one(evaluation_dict)
     
     await db.interviews.update_one(
@@ -487,18 +489,19 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
         }}
     )
     
-    user = await db.users.find_one({"id": current_user["sub"]}, {"_id": 0})
-    total_interviews = user["total_interviews"] + 1
-    new_avg = ((user["average_score"] * user["total_interviews"]) + overall_score) / total_interviews
-    
-    await db.users.update_one(
-        {"id": current_user["sub"]},
-        {"$set": {
-            "total_interviews": total_interviews,
-            "average_score": round(new_avg, 2),
-            "readiness_status": readiness.value
-        }}
-    )
+    # Only increment user stats if not already completed
+    if interview.get("status") != "completed":
+        user = await db.users.find_one({"id": current_user["sub"]}, {"_id": 0})
+        total_interviews = user["total_interviews"] + 1
+        new_avg = ((user["average_score"] * user["total_interviews"]) + overall_score) / total_interviews
+        await db.users.update_one(
+            {"id": current_user["sub"]},
+            {"$set": {
+                "total_interviews": total_interviews,
+                "average_score": round(new_avg, 2),
+                "readiness_status": readiness.value
+            }}
+        )
     
     return Evaluation(**evaluation_dict)
 
@@ -511,8 +514,51 @@ async def get_evaluation(interview_id: str, current_user: dict = Depends(get_cur
         {"_id": 0}
     )
     
+    # AUTO-GENERATE: If no evaluation found but interview exists with enough answers, generate it now
     if not evaluation:
-        raise HTTPException(status_code=404, detail="Evaluation not found")
+        interview = await db.interviews.find_one(
+            {"id": interview_id, "user_id": current_user["sub"]},
+            {"_id": 0}
+        )
+        if not interview:
+            raise HTTPException(status_code=404, detail="Interview not found")
+        if len(interview.get("answers", [])) < 5:
+            raise HTTPException(status_code=404, detail="Evaluation not found — interview not yet complete")
+        # Trigger evaluation generation by calling complete endpoint logic inline
+        from fastapi import Request
+        logger.info(f"Auto-generating evaluation for interview {interview_id}")
+        # Re-use the complete logic
+        scores = [ans["score"] for ans in interview["answers"]]
+        overall_score = sum(scores) / len(scores)
+        breakdown = {
+            "clarity": sum(ans["evaluation"]["clarity"] for ans in interview["answers"]) / len(interview["answers"]),
+            "confidence": sum(ans["evaluation"]["confidence"] for ans in interview["answers"]) / len(interview["answers"]),
+            "structure": sum(ans["evaluation"]["structure"] for ans in interview["answers"]) / len(interview["answers"]),
+            "relevance": sum(ans["evaluation"]["relevance"] for ans in interview["answers"]) / len(interview["answers"])
+        }
+        strengths = [f"Strong {k}" for k, v in breakdown.items() if v >= 8.0] or ["Completed the interview", "Attempted all questions"]
+        mistakes, tips, detailed_feedback = [], [], []
+        for ans in interview["answers"]:
+            fb = await ai_service.generate_feedback(question=ans["question"], user_answer=ans["answer"], score=ans["score"])
+            detailed_feedback.append({"question": ans["question"], "your_answer": ans["answer"], "score": ans["score"],
+                "improved_answer": fb.get("improved_answer", ""), "why_improved": fb.get("why_improved", ""),
+                "mistakes": fb.get("mistakes", [])})
+            if ans["score"] < 7.5:
+                mistakes.extend(fb.get("mistakes", []))
+                tips.extend(fb.get("tips", []))
+        if not tips:
+            tips = ["Practice STAR method", "Use specific examples", "Be concise and structured"]
+        readiness = ReadinessStatus.READY if overall_score >= 8.0 else (ReadinessStatus.NEEDS_PRACTICE if overall_score >= 6.0 else ReadinessStatus.NOT_READY)
+        evaluation = {
+            "id": str(uuid.uuid4()), "interview_id": interview_id, "user_id": current_user["sub"],
+            "overall_score": round(overall_score, 2), "breakdown": {k: round(v, 2) for k, v in breakdown.items()},
+            "strengths": strengths, "mistakes": mistakes[:4], "improvement_tips": list(set(tips))[:5],
+            "detailed_feedback": detailed_feedback, "readiness_flag": readiness.value,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.evaluations.insert_one(evaluation)
+        await db.interviews.update_one({"id": interview_id}, {"$set": {"status": "completed", "completed_at": datetime.now(timezone.utc).isoformat(), "overall_score": round(overall_score, 2)}})
+        return evaluation
     
     # Sanitize mistakes for legacy data (convert strings to structured dicts)
     if "mistakes" in evaluation:
@@ -527,13 +573,12 @@ async def get_evaluation(interview_id: str, current_user: dict = Depends(get_cur
     interview = await db.interviews.find_one({"id": interview_id}, {"_id": 0})
     
     detailed_feedback = []
-    for ans in interview.get("answers", []):
+    for ans in (interview or {}).get("answers", []):
         feedback = await ai_service.generate_feedback(
             question=ans["question"],
             user_answer=ans["answer"],
             score=ans["score"]
         )
-        
         detailed_feedback.append({
             "question": ans["question"],
             "your_answer": ans["answer"],

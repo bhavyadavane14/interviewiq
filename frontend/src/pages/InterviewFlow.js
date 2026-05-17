@@ -59,7 +59,12 @@ const InterviewFlow = () => {
         if (nextIdx < currentInterview.questions.length) {
           setCurrentQuestion(currentInterview.questions[nextIdx]);
         } else if (nextIdx >= 5) {
-          // If 5 answers but not completed in status, navigate to evaluation
+          // All answers submitted but complete() was never called — call it now
+          try {
+            await interviewAPI.complete(interviewId);
+          } catch (err) {
+            // complete() might already have run — that's fine
+          }
           navigate(`/evaluation/${interviewId}`);
         }
       }
