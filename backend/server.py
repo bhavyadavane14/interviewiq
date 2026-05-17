@@ -205,22 +205,22 @@ async def login(login_data: UserLogin):
     last_login_str = user.get("last_login")
     streak = user.get("streak", 1)
     
-    # Recovery Mode: Force streak to 3 if requested by user state
-    if streak < 3:
-        # We trust the user's manual report for this sync
-        streak = 3
-        
     if last_login_str:
         try:
             last_login = datetime.fromisoformat(last_login_str.replace('Z', '+00:00')).date()
             days_diff = (today - last_login).days
-            if days_diff == 1:
+            if days_diff == 0:
+                # Same day login — keep current streak, don't increment
+                pass
+            elif days_diff == 1:
+                # Consecutive day — increment streak
                 streak += 1
-            elif days_diff > 1:
-                # Don't reset if we just forced it to 3 for recovery
-                if streak <= 3: streak = 1
+            else:
+                # Missed one or more days — reset streak to 1
+                streak = 1
         except:
             pass
+    # No last_login means first-ever login — streak stays at whatever signup set (1)
     
     new_streak = streak
 
@@ -275,6 +275,29 @@ async def start_interview(interview_data: InterviewStart, current_user: dict = D
     
     await db.interviews.insert_one(interview_dict)
     return Interview(**interview_dict)
+
+@api_router.get("/interviews/history")
+async def get_interview_history(current_user: dict = Depends(get_current_user)):
+    interviews = await db.interviews.find(
+        {"user_id": current_user["sub"]},
+        {"_id": 0}
+    ).sort("started_at", -1).to_list(100)
+    processed = []
+    for i in interviews:
+        # Normalize detailed_feedback for legacy records
+        if i.get("detailed_feedback") is None:
+            i["detailed_feedback"] = []
+            
+        it_str = i.get("interview_type", "HR")
+        if "Technical" in it_str: i["interview_type"] = InterviewType.TECHNICAL
+        elif "Behavioral" in it_str: i["interview_type"] = InterviewType.BEHAVIORAL
+        else: i["interview_type"] = InterviewType.HR
+        try:
+            processed.append(Interview(**i).model_dump())
+        except:
+            processed.append(i) # Fallback to raw data
+            
+    return processed
 
 @api_router.get("/interviews/{interview_id}", response_model=Interview)
 async def get_single_interview(interview_id: str, current_user: dict = Depends(get_current_user)):
@@ -479,28 +502,7 @@ async def complete_interview(interview_id: str, current_user: dict = Depends(get
     
     return Evaluation(**evaluation_dict)
 
-@api_router.get("/interviews/history")
-async def get_interview_history(current_user: dict = Depends(get_current_user)):
-    interviews = await db.interviews.find(
-        {"user_id": current_user["sub"]},
-        {"_id": 0}
-    ).sort("started_at", -1).to_list(100)
-    processed = []
-    for i in interviews:
-        # Normalize detailed_feedback for legacy records
-        if i.get("detailed_feedback") is None:
-            i["detailed_feedback"] = []
-            
-        it_str = i.get("interview_type", "HR")
-        if "Technical" in it_str: i["interview_type"] = InterviewType.TECHNICAL
-        elif "Behavioral" in it_str: i["interview_type"] = InterviewType.BEHAVIORAL
-        else: i["interview_type"] = InterviewType.HR
-        try:
-            processed.append(Interview(**i).model_dump())
-        except:
-            processed.append(i) # Fallback to raw data
-            
-    return processed
+
 
 @api_router.get("/evaluations/{interview_id}")
 async def get_evaluation(interview_id: str, current_user: dict = Depends(get_current_user)):
