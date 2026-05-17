@@ -41,7 +41,7 @@ const PublicFooter = () => {
           </div>
         </div>
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
-          <p>© {new Date().getFullYear()} InterviewIQ. Built for GenAI Hackathon.</p>
+          <p>© {new Date().getFullYear()} InterviewIQ. All rights reserved.</p>
           <p className="mt-2 md:mt-0 flex items-center gap-1">Your data is private <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block ml-2"></span> Secure Platform</p>
         </div>
       </div>
