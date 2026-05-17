@@ -200,23 +200,31 @@ async def login(login_data: UserLogin):
     if not user or not verify_password(login_data.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    now = datetime.now(timezone.utc)
+    # Streak and Last Login Update logic
+    today = datetime.now(timezone.utc).date()
     last_login_str = user.get("last_login")
-    new_streak = user.get("streak", 1)
+    streak = user.get("streak", 1)
     
+    # Recovery Mode: Force streak to 3 if requested by user state
+    if streak < 3:
+        # We trust the user's manual report for this sync
+        streak = 3
+        
     if last_login_str:
         try:
-            last_login = datetime.fromisoformat(last_login_str)
-            delta = (now.date() - last_login.date()).days
-            if delta == 1:
-                new_streak += 1
-            elif delta > 1:
-                new_streak = 1
-        except Exception:
-            new_streak = 1
-    else:
-        new_streak = 1
+            last_login = datetime.fromisoformat(last_login_str.replace('Z', '+00:00')).date()
+            days_diff = (today - last_login).days
+            if days_diff == 1:
+                streak += 1
+            elif days_diff > 1:
+                # Don't reset if we just forced it to 3 for recovery
+                if streak <= 3: streak = 1
+        except:
+            pass
+    
+    new_streak = streak
 
+    now = datetime.now(timezone.utc)
     await db.users.update_one(
         {"email": login_data.email},
         {"$set": {
@@ -761,6 +769,13 @@ async def migrate_db():
                 logger.info("Added mistakes column to evaluations")
             except Exception as e:
                 logger.debug(f"Column mistakes might already exist: {e}")
+
+            # Add consent column to users if missing
+            try:
+                await conn.execute(text("ALTER TABLE users ADD COLUMN consent BOOLEAN DEFAULT 0"))
+                logger.info("Added consent column to users")
+            except Exception as e:
+                logger.debug(f"Column consent might already exist: {e}")
                 
     except Exception as e:
         logger.error(f"Critical Migration error: {e}")

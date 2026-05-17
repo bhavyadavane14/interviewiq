@@ -158,24 +158,37 @@ class QueryWrapper:
         self.sort_dir = direction
         return self
 
-    async def to_list(self, length=100):
-        async with AsyncSessionLocal() as session:
-            query = select(self.model)
-            for key, value in self.filter_dict.items():
-                if hasattr(self.model, key):
-                    query = query.where(getattr(self.model, key) == value)
-            
-            if self.sort_field and hasattr(self.model, self.sort_field):
-                if self.sort_dir == -1:
-                    query = query.order_by(getattr(self.model, self.sort_field).desc())
-                else:
-                    query = query.order_by(getattr(self.model, self.sort_field).asc())
-            
-            if length:
-                query = query.limit(length)
+    async def to_list(self, length=None):
+        try:
+            async with AsyncSessionLocal() as session:
+                query = select(self.model)
+                for key, value in self.filter_dict.items():
+                    if hasattr(self.model, key):
+                        query = query.where(getattr(self.model, key) == value)
                 
-            result = await session.execute(query)
-            items = result.scalars().all()
-            return [{c.name: getattr(item, c.name) for c in item.__table__.columns} for item in items]
+                if self.sort_field and hasattr(self.model, self.sort_field):
+                    if self.sort_dir == -1:
+                        query = query.order_by(getattr(self.model, self.sort_field).desc())
+                    else:
+                        query = query.order_by(getattr(self.model, self.sort_field).asc())
+                
+                if length:
+                    query = query.limit(length)
+                    
+                result = await session.execute(query)
+                items = result.scalars().all()
+                results = []
+                for item in items:
+                    row = {}
+                    for c in item.__table__.columns:
+                        val = getattr(item, c.name)
+                        if isinstance(val, datetime):
+                            val = val.isoformat()
+                        row[c.name] = val
+                    results.append(row)
+                return results
+        except Exception as e:
+            print(f"Error in to_list: {e}")
+            return []
 
 db = DatabaseManager()
