@@ -359,19 +359,23 @@ async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(
     
     next_question = None
     if len(interview["answers"]) < 5:
-        next_question = await ai_service.generate_question(
+        next_question_raw = await ai_service.generate_question(
             interview_type=it_enum,
             question_number=len(interview["answers"]) + 1,
             previous_answers=interview["answers"],
             focus_area=interview.get("focus_area")
         )
         
-        interview["questions"].append({
-            "id": str(uuid.uuid4()),
-            "question": next_question["question"],
-            "difficulty": next_question.get("difficulty", "medium"),
+        # Generate the ID first so it can be returned to the frontend
+        next_q_id = str(uuid.uuid4())
+        next_question = {
+            "id": next_q_id,
+            "question": next_question_raw["question"],
+            "difficulty": next_question_raw.get("difficulty", "medium"),
             "number": len(interview["answers"]) + 1
-        })
+        }
+        
+        interview["questions"].append(next_question)
     
     await db.interviews.update_one(
         {"id": answer_data.interview_id},
@@ -384,6 +388,7 @@ async def submit_answer(answer_data: AnswerSubmit, current_user: dict = Depends(
         "next_question": next_question,
         "is_complete": len(interview["answers"]) >= 5
     }
+
 
 @api_router.post("/interviews/{interview_id}/complete")
 async def complete_interview(interview_id: str, current_user: dict = Depends(get_current_user)):

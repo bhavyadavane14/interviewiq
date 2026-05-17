@@ -131,6 +131,33 @@ class CollectionWrapper:
                 return True
             return False
 
+    async def delete_one(self, filter_dict):
+        async with AsyncSessionLocal() as session:
+            query = select(self.model)
+            for key, value in filter_dict.items():
+                if hasattr(self.model, key):
+                    query = query.where(getattr(self.model, key) == value)
+            result = await session.execute(query)
+            item = result.scalars().first()
+            if item:
+                await session.delete(item)
+                await session.commit()
+                return True
+            return False
+
+    async def delete_many(self, filter_dict):
+        async with AsyncSessionLocal() as session:
+            query = select(self.model)
+            for key, value in filter_dict.items():
+                if hasattr(self.model, key):
+                    query = query.where(getattr(self.model, key) == value)
+            result = await session.execute(query)
+            items = result.scalars().all()
+            for item in items:
+                await session.delete(item)
+            await session.commit()
+            return len(items)
+
     def find(self, filter_dict=None, projection=None):
         return QueryWrapper(self.model, filter_dict)
 
