@@ -41,7 +41,7 @@ const LandingPage = () => {
             </div>
 
           </div>
-          <div className="hidden lg:block relative">
+          <div className="relative mt-12 lg:mt-0">
             <div className="absolute inset-0 bg-indigo-500 rounded-3xl blur-3xl opacity-20 transform rotate-6"></div>
             <img 
               src="https://images.pexels.com/photos/5922538/pexels-photo-5922538.jpeg?auto=compress&cs=tinysrgb&w=800" 
