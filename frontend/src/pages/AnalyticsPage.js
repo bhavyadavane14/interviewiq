@@ -42,8 +42,8 @@ const AnalyticsPage = () => {
           {/* Growth Chart */}
           <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-bold mb-6 dark:text-white">Performance Growth</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              {analytics?.growth_data?.length > 0 ? (
+            {analytics?.growth_data?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={analytics?.growth_data}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#334155" : "#e2e8f0"} />
                   <XAxis dataKey="date" stroke="#64748b" />
@@ -51,31 +51,31 @@ const AnalyticsPage = () => {
                   <Tooltip />
                   <Line type="monotone" dataKey="score" stroke="#4F46E5" strokeWidth={3} dot={{ r: 6 }} activeDot={{ r: 8 }} />
                 </LineChart>
-              ) : (
-                <div className="h-full flex items-center justify-center text-slate-400">
-                  Take your first interview to see growth data
-                </div>
-              )}
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex flex-col items-center justify-center text-slate-400 text-center w-full">
+                Take your first interview to see growth data
+              </div>
+            )}
           </div>
 
           {/* Skill Breakdown */}
           <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-bold mb-6 dark:text-white">Skill Matrix</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              {analytics?.skill_breakdown?.some(s => s.A > 0) ? (
+            {analytics?.skill_breakdown?.some(s => s.A > 0) ? (
+              <ResponsiveContainer width="100%" height={300}>
                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analytics?.skill_breakdown}>
                   <PolarGrid stroke={isDarkMode ? "#334155" : "#e2e8f0"} />
                   <PolarAngleAxis dataKey="subject" tick={{ fill: isDarkMode ? "#94a3b8" : "#64748b" }} />
                   <PolarRadiusAxis tick={{ fill: isDarkMode ? "#94a3b8" : "#64748b" }} />
                   <Radar name="Skills" dataKey="A" stroke="#4F46E5" fill="#4F46E5" fillOpacity={0.6} />
                 </RadarChart>
-              ) : (
-                <div className="h-full flex items-center justify-center text-slate-400">
-                  Complete an interview to generate your skill matrix
-                </div>
-              )}
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex flex-col items-center justify-center text-slate-400 text-center w-full">
+                Complete an interview to generate your skill matrix
+              </div>
+            )}
           </div>
         </div>
 
